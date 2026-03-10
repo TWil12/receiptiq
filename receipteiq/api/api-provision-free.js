@@ -73,7 +73,7 @@ async function sendKeyEmail(email, rawKey) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from:    "ReceiptIQ <keys@receiptiq.dev>",
+      from:    "ReceiptIQ <receiptiq>@weanol.resend.app",
       to:      [email],
       subject: "Your ReceiptIQ API Key — Starter Plan",
       html,
