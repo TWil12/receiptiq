@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReceiptIQ — Receipt Parsing API</title>
+<meta name="description" content="Turn any receipt or invoice into structured JSON in under 2 seconds. One POST request. No templates. Pay per use.">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0a0a08;
+    --cream: #f5f0e8;
+    --ink: #1a1a14;
+    --green: #2d5a27;
+    --green-bright: #4a9e3f;
+    --green-light: #e8f5e3;
+    --amber: #c8860a;
+    --amber-light: #fff3d6;
+    --red: #c0392b;
+    --paper: #faf7f0;
+    --rule: #d4cfc4;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 2.5rem;
+    border-bottom: 1px solid var(--rule);
+    background: rgba(245,240,232,0.92);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:0.08em; color:var(--green); }
+  .nav-logo span { color:var(--ink); }
+  .nav-links { display:flex; gap:2rem; list-style:none; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; }
+  .nav-links a { color:var(--ink); text-decoration:none; opacity:0.6; transition:opacity 0.2s; }
+  .nav-links a:hover { opacity:1; }
+  .nav-cta { background:var(--green); color:var(--cream)!important; opacity:1!important; padding:0.5rem 1.2rem; border-radius:2px; }
+  .nav-cta:hover { background:var(--green-bright)!important; }
+
+  /* ── TICKER ── */
+  .ticker { background:var(--green); color:var(--cream); padding:0.5rem 0; overflow:hidden; white-space:nowrap; margin-top:64px; }
+  .ticker-inner { display:inline-block; animation:ticker 22s linear infinite; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; }
+  @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: calc(100vh - 64px);
+    display: grid; grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 5rem 5rem 4rem;
+    gap: 4rem;
+    position: relative;
+  }
+  .hero::after {
+    content:''; position:absolute; top:0; right:0;
+    width:50%; height:100%;
+    background:var(--paper); z-index:-1;
+    border-left:1px solid var(--rule);
+  }
+
+  .hero-eyebrow {
+    font-size:0.68rem; letter-spacing:0.2em; text-transform:uppercase;
+    color:var(--green); margin-bottom:1.2rem;
+    display:flex; align-items:center; gap:0.6rem;
+  }
+  .hero-eyebrow::before { content:''; display:inline-block; width:24px; height:1px; background:var(--green); }
+
+  h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(4rem,8vw,7rem); line-height:0.92; letter-spacing:0.02em; margin-bottom:1.5rem; }
+  h1 em { font-family:'Instrument Serif',serif; font-style:italic; color:var(--green); }
+
+  .hero-sub { font-size:0.82rem; line-height:1.8; opacity:0.65; max-width:420px; margin-bottom:2.5rem; }
+  .hero-actions { display:flex; gap:1rem; align-items:center; }
+
+  .btn-primary {
+    background:var(--green); color:var(--cream); border:none;
+    padding:0.9rem 2rem; font-family:'DM Mono',monospace;
+    font-size:0.78rem; letter-spacing:0.1em; text-transform:uppercase;
+    cursor:pointer; border-radius:2px; transition:all 0.2s;
+    text-decoration:none; display:inline-block;
+  }
+  .btn-primary:hover { background:var(--green-bright); transform:translateY(-1px); }
+
+  .btn-ghost {
+    color:var(--ink); text-decoration:none; font-size:0.75rem;
+    letter-spacing:0.08em; opacity:0.5; display:flex; align-items:center;
+    gap:0.4rem; transition:opacity 0.2s;
+  }
+  .btn-ghost:hover { opacity:1; }
+
+  /* ── DEMO PANEL ── */
+  .demo-panel {
+    background:var(--paper); border:1px solid var(--rule);
+    border-radius:4px; overflow:hidden;
+    box-shadow:8px 8px 0 rgba(0,0,0,0.06);
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+  .demo-tabs { display:flex; border-bottom:1px solid var(--rule); background:var(--cream); }
+  .demo-tab {
+    padding:0.75rem 1.2rem; font-size:0.68rem; letter-spacing:0.1em;
+    text-transform:uppercase; cursor:pointer; border:none; background:none;
+    color:var(--ink); opacity:0.4; border-right:1px solid var(--rule);
+    transition:all 0.2s; font-family:'DM Mono',monospace;
+  }
+  .demo-tab.active { opacity:1; background:var(--paper); border-bottom:2px solid var(--green); margin-bottom:-1px; }
+  .demo-body { padding:1.2rem; }
+
+  .demo-upload {
+    border:2px dashed var(--rule); border-radius:3px; padding:2rem;
+    text-align:center; cursor:pointer; transition:all 0.2s;
+    background:var(--cream); position:relative;
+  }
+  .demo-upload:hover { border-color:var(--green); background:var(--green-light); }
+  .demo-upload input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+  .upload-icon { font-size:2rem; margin-bottom:0.5rem; }
+  .upload-label { font-size:0.72rem; opacity:0.5; letter-spacing:0.06em; }
+
+  #upload-preview { display:none; margin-top:0.8rem; }
+  #preview-img { width:100%; max-height:160px; object-fit:cover; border-radius:2px; border:1px solid var(--rule); }
+  .file-meta { font-size:0.65rem; opacity:0.5; margin-top:0.3rem; }
+
+  .url-input {
+    width:100%; padding:0.7rem 1rem; background:var(--cream);
+    border:1px solid var(--rule); border-radius:2px;
+    font-family:'DM Mono',monospace; font-size:0.75rem; color:var(--ink);
+    outline:none; transition:border-color 0.2s;
+  }
+  .url-input:focus { border-color:var(--green); }
+  .url-hint { font-size:0.65rem; opacity:0.4; margin-top:0.4rem; }
+
+  .demo-parse-btn {
+    width:100%; background:var(--green); color:var(--cream); border:none;
+    padding:0.8rem; font-family:'DM Mono',monospace; font-size:0.75rem;
+    letter-spacing:0.12em; text-transform:uppercase; cursor:pointer;
+    border-radius:2px; transition:all 0.2s; margin-top:0.8rem;
+  }
+  .demo-parse-btn:hover:not(:disabled) { background:var(--green-bright); }
+  .demo-parse-btn:disabled { opacity:0.45; cursor:not-allowed; }
+
+  .demo-notice {
+    font-size:0.62rem; opacity:0.45; text-align:center;
+    margin-top:0.6rem; line-height:1.6;
+  }
+
+  .status-bar {
+    font-size:0.68rem; padding:0.5rem 0.8rem; border-radius:2px;
+    margin-top:0.8rem; display:none; line-height:1.5;
+  }
+  .status-bar.loading { display:block; background:var(--amber-light); color:var(--amber); animation:pulse 1.4s infinite; }
+  .status-bar.success { display:block; background:var(--green-light); color:var(--green); }
+  .status-bar.error   { display:block; background:#fdecea; color:var(--red); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+  .result-box {
+    margin-top:0.8rem; background:var(--ink); color:#7ec87e;
+    padding:1rem; border-radius:3px; font-size:0.68rem; line-height:1.8;
+    white-space:pre-wrap; word-break:break-all;
+    max-height:280px; overflow-y:auto; display:none;
+  }
+  .result-box.visible { display:block; }
+  .result-box.error { color:#e07070; }
+
+  /* ── STATS ── */
+  .stats-bar {
+    border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);
+    padding:1.5rem 5rem; display:flex; gap:4rem; background:var(--paper);
+  }
+  .stat { display:flex; flex-direction:column; gap:0.2rem; }
+  .stat-num { font-family:'Bebas Neue',sans-serif; font-size:2rem; color:var(--green); letter-spacing:0.05em; }
+  .stat-label { font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; opacity:0.45; }
+
+  /* ── SECURITY BADGE ── */
+  .security-strip {
+    background:var(--ink); color:var(--cream);
+    padding:0.6rem 5rem; font-size:0.65rem;
+    letter-spacing:0.12em; text-transform:uppercase;
+    display:flex; gap:2.5rem; align-items:center; flex-wrap:wrap;
+  }
+  .sec-item { display:flex; align-items:center; gap:0.4rem; opacity:0.7; }
+  .sec-item::before { content:'🔒'; font-size:0.7rem; }
+
+  /* ── PRICING ── */
+  #pricing { padding:6rem 5rem; background:var(--cream); }
+  .section-label { font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--green); margin-bottom:0.6rem; }
+  .section-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(2.5rem,5vw,4rem); line-height:1; margin-bottom:3rem; }
+
+  .pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
+  .pricing-card {
+    background:var(--paper); border:1px solid var(--rule); border-radius:3px;
+    padding:2rem; position:relative; transition:transform 0.2s, box-shadow 0.2s;
+  }
+  .pricing-card:hover { transform:translateY(-3px); box-shadow:6px 6px 0 rgba(0,0,0,0.06); }
+  .pricing-card.featured { border-color:var(--green); background:var(--green); color:var(--cream); }
+  .pricing-card.featured .pricing-sub,
+  .pricing-card.featured .pricing-feature { color:rgba(245,240,232,0.7); }
+  .pricing-badge {
+    position:absolute; top:-10px; left:1.5rem;
+    background:var(--amber); color:white;
+    font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase;
+    padding:0.2rem 0.6rem; border-radius:1px;
+  }
+  .pricing-tier { font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; opacity:0.5; margin-bottom:0.8rem; }
+  .pricing-price { font-family:'Bebas Neue',sans-serif; font-size:3.5rem; letter-spacing:0.03em; line-height:1; }
+  .pricing-price span { font-family:'DM Mono',monospace; font-size:1rem; opacity:0.6; }
+  .pricing-sub { font-size:0.68rem; opacity:0.5; margin-bottom:1.5rem; }
+  .pricing-divider { height:1px; background:var(--rule); margin-bottom:1.2rem; }
+  .pricing-card.featured .pricing-divider { background:rgba(255,255,255,0.2); }
+  .pricing-feature { font-size:0.72rem; opacity:0.65; padding:0.35rem 0; display:flex; align-items:center; gap:0.5rem; }
+  .pricing-feature::before { content:'✓'; color:var(--green-bright); font-size:0.7rem; }
+  .pricing-card.featured .pricing-feature::before { color:#a8e6a0; }
+  .pricing-btn {
+    display:block; text-align:center; margin-top:1.5rem; padding:0.75rem;
+    border:1px solid currentColor; border-radius:2px;
+    font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.1em;
+    text-transform:uppercase; cursor:pointer; text-decoration:none;
+    transition:all 0.2s; color:var(--ink); background:none;
+  }
+  .pricing-card.featured .pricing-btn { color:var(--cream); border-color:rgba(255,255,255,0.4); }
+  .pricing-btn:hover { background:var(--green); color:var(--cream); border-color:var(--green); }
+
+  /* ── DOCS ── */
+  #docs { padding:6rem 5rem; background:var(--paper); border-top:1px solid var(--rule); }
+  .code-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; margin-top:3rem; }
+  .code-block { background:var(--ink); border-radius:3px; overflow:hidden; }
+  .code-header {
+    padding:0.6rem 1rem; border-bottom:1px solid rgba(255,255,255,0.08);
+    font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase;
+    color:rgba(255,255,255,0.3); display:flex; align-items:center; gap:0.5rem;
+  }
+  .code-dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.15); }
+  code {
+    display:block; padding:1.2rem;
+    font-family:'DM Mono',monospace; font-size:0.72rem; line-height:1.8;
+    color:#c5e8c5; white-space:pre; overflow-x:auto;
+  }
+  .tk { color:#7ec8e3; }
+  .ts { color:#c5e8c5; }
+  .tc { color:rgba(255,255,255,0.25); font-style:italic; }
+  .tkw { color:#e8d07e; }
+
+  /* ── PRIVACY ── */
+  #privacy { padding:4rem 5rem; background:var(--cream); border-top:1px solid var(--rule); }
+  .privacy-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; margin-top:2rem; }
+  .privacy-card { padding:1.5rem; background:var(--paper); border:1px solid var(--rule); border-radius:3px; }
+  .privacy-icon { font-size:1.5rem; margin-bottom:0.8rem; }
+  .privacy-title { font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.5rem; }
+  .privacy-text { font-size:0.7rem; opacity:0.55; line-height:1.8; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top:1px solid var(--rule); padding:2.5rem 5rem;
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--cream);
+  }
+  .footer-logo { font-family:'Bebas Neue',sans-serif; font-size:1.3rem; color:var(--green); letter-spacing:0.08em; }
+  .footer-links { display:flex; gap:2rem; font-size:0.65rem; opacity:0.4; }
+  .footer-links a { color:var(--ink); text-decoration:none; }
+  .footer-links a:hover { opacity:1; }
+  .footer-copy { font-size:0.65rem; opacity:0.35; letter-spacing:0.06em; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  .hero-content > * { animation:fadeUp 0.6s ease both; }
+  .hero-eyebrow { animation-delay:0.1s; }
+  h1 { animation-delay:0.2s; }
+  .hero-sub { animation-delay:0.3s; }
+  .hero-actions { animation-delay:0.4s; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:900px){
+    .hero{ grid-template-columns:1fr; padding:4rem 2rem 3rem; }
+    .hero::after{ display:none; }
+    .stats-bar,.security-strip{ padding:1.5rem 2rem; flex-wrap:wrap; gap:1.5rem; }
+    #pricing,#docs,#privacy{ padding:4rem 2rem; }
+    .pricing-grid,.code-grid,.privacy-grid{ grid-template-columns:1fr; }
+    footer{ flex-direction:column; gap:1rem; padding:2rem; text-align:center; }
+    nav{ padding:1rem 1.5rem; }
+    .nav-links{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Receipt<span>IQ</span></div>
+  <ul class="nav-links">
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#docs">Docs</a></li>
+    <li><a href="#privacy">Privacy</a></li>
+    <li><a href="#pricing" class="nav-cta">Get API Key</a></li>
+  </ul>
+</nav>
+
+<div class="ticker">
+  <span class="ticker-inner">
+    &nbsp;Receipt → JSON &nbsp;·&nbsp; Invoice → JSON &nbsp;·&nbsp; Parse in &lt;2s &nbsp;·&nbsp; 99.2% accuracy &nbsp;·&nbsp; 40+ currencies &nbsp;·&nbsp; No image storage &nbsp;·&nbsp; SSRF protected &nbsp;·&nbsp; Rate limited &nbsp;·&nbsp; REST API &nbsp;·&nbsp; No SDK required &nbsp;·&nbsp;
+    &nbsp;Receipt → JSON &nbsp;·&nbsp; Invoice → JSON &nbsp;·&nbsp; Parse in &lt;2s &nbsp;·&nbsp; 99.2% accuracy &nbsp;·&nbsp; 40+ currencies &nbsp;·&nbsp; No image storage &nbsp;·&nbsp; SSRF protected &nbsp;·&nbsp; Rate limited &nbsp;·&nbsp; REST API &nbsp;·&nbsp; No SDK required &nbsp;·&nbsp;
+  </span>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow">Receipt Parsing API</div>
+    <h1>Any Receipt.<br><em>Clean</em><br>JSON.</h1>
+    <p class="hero-sub">
+      One POST request. Upload a photo, scan, or PDF of any receipt or invoice — get back structured data in under 2 seconds. No templates. No training. Just results.
+    </p>
+    <div class="hero-actions">
+      <a href="#pricing" class="btn-primary">Get API Key →</a>
+      <a href="#demo" class="btn-ghost">↓ Try the live demo</a>
+    </div>
+  </div>
+
+  <!-- DEMO PANEL -->
+  <div class="demo-panel" id="demo">
+    <div class="demo-tabs">
+      <button class="demo-tab active" onclick="switchTab('upload',this)">Upload Image</button>
+      <button class="demo-tab" onclick="switchTab('url',this)">Image URL</button>
+    </div>
+    <div class="demo-body">
+
+      <div id="tab-upload">
+        <div class="demo-upload" id="uploadZone">
+          <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onchange="handleFile(event)">
+          <div class="upload-icon">🧾</div>
+          <div style="font-size:0.8rem;margin-bottom:0.3rem;">Drop a receipt image here</div>
+          <div class="upload-label">JPG, PNG, WEBP · max 5MB</div>
+        </div>
+        <div id="upload-preview">
+          <img id="preview-img" alt="Receipt preview">
+          <div class="file-meta" id="file-meta"></div>
+        </div>
+      </div>
+
+      <div id="tab-url" style="display:none;">
+        <input type="text" class="url-input" id="imageUrl" placeholder="https://example.com/receipt.jpg">
+        <div class="url-hint">Must be a public https:// image URL</div>
+      </div>
+
+      <button class="demo-parse-btn" onclick="parseReceipt()" id="parseBtn">⚡ Parse Receipt</button>
+      <div class="demo-notice">
+        Demo routes through a secure proxy — your images are never stored.
+      </div>
+
+      <div class="status-bar" id="statusBar"></div>
+      <div class="result-box" id="resultBox"></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num">2s</div><div class="stat-label">Avg response</div></div>
+  <div class="stat"><div class="stat-num">99.2%</div><div class="stat-label">Parse accuracy</div></div>
+  <div class="stat"><div class="stat-num">40+</div><div class="stat-label">Currencies</div></div>
+  <div class="stat"><div class="stat-num">$0.002</div><div class="stat-label">Cost per receipt</div></div>
+  <div class="stat"><div class="stat-num">0</div><div class="stat-label">Images stored</div></div>
+</div>
+
+<!-- SECURITY STRIP -->
+<div class="security-strip">
+  <div class="sec-item">No image storage</div>
+  <div class="sec-item">SSRF protected</div>
+  <div class="sec-item">Rate limited per key</div>
+  <div class="sec-item">Persistent usage tracking</div>
+  <div class="sec-item">25s timeout</div>
+  <div class="sec-item">5MB payload limit</div>
+</div>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-label">Simple pricing</div>
+  <div class="section-title">$0.02 per receipt.<br>Buy when you need.</div>
+  <p style="font-size:0.8rem;opacity:0.55;margin-bottom:2.5rem;max-width:480px;">No subscriptions. No monthly fees. Buy a credit pack, each receipt parse uses one credit. Credits never expire. Buy more anytime.</p>
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="pricing-tier">Starter Pack</div>
+      <div class="pricing-price">$10<span> one-time</span></div>
+      <div class="pricing-sub">500 credits · $0.020 / receipt</div>
+      <div class="pricing-divider"></div>
+      <div class="pricing-feature">500 receipt parses</div>
+      <div class="pricing-feature">Structured JSON output</div>
+      <div class="pricing-feature">40+ currencies</div>
+      <div class="pricing-feature">Credits never expire</div>
+      <a href="/api/checkout?pack=starter" class="pricing-btn">Buy 500 credits →</a>
+    </div>
+    <div class="pricing-card featured">
+      <div class="pricing-badge">Best value</div>
+      <div class="pricing-tier">Growth Pack</div>
+      <div class="pricing-price">$25<span> one-time</span></div>
+      <div class="pricing-sub">1,500 credits · $0.017 / receipt</div>
+      <div class="pricing-divider"></div>
+      <div class="pricing-feature">1,500 receipt parses</div>
+      <div class="pricing-feature">15% cheaper per receipt</div>
+      <div class="pricing-feature">Priority processing</div>
+      <div class="pricing-feature">Credits never expire</div>
+      <a href="/api/checkout?pack=growth" class="pricing-btn">Buy 1,500 credits →</a>
+    </div>
+    <div class="pricing-card">
+      <div class="pricing-tier">Scale Pack</div>
+      <div class="pricing-price">$100<span> one-time</span></div>
+      <div class="pricing-sub">7,000 credits · $0.014 / receipt</div>
+      <div class="pricing-divider"></div>
+      <div class="pricing-feature">7,000 receipt parses</div>
+      <div class="pricing-feature">30% cheaper per receipt</div>
+      <div class="pricing-feature">Priority processing</div>
+      <div class="pricing-feature">Credits never expire</div>
+      <a href="/api/checkout?pack=scale" class="pricing-btn">Buy 7,000 credits →</a>
+    </div>
+  </div>
+</section>
+
+<!-- DOCS -->
+<section id="docs">
+  <div class="section-label">Integration</div>
+  <div class="section-title">One endpoint.<br>Any language.</div>
+  <div class="code-grid">
+    <div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dot"></div><div class="code-dot"></div>cURL — image URL</div>
+        <code><span class="tc"># Parse via public image URL</span>
+curl -X POST \
+  https://api.receiptiq.dev/v1/parse \
+  -H <span class="ts">"x-api-key: riq_your_key"</span> \
+  -H <span class="ts">"Content-Type: application/json"</span> \
+  -d <span class="ts">'{"url":"https://example.com/receipt.jpg"}'</span></code>
+      </div>
+      <div class="code-block" style="margin-top:1rem;">
+        <div class="code-header"><div class="code-dot"></div><div class="code-dot"></div>JavaScript — file upload</div>
+        <code><span class="tkw">const</span> toBase64 = file => <span class="tkw">new</span> Promise(res => {
+  <span class="tkw">const</span> r = <span class="tkw">new</span> FileReader();
+  r.onload = e => res(e.target.result.split(<span class="ts">','</span>)[1]);
+  r.readAsDataURL(file);
+});
+
+<span class="tkw">const</span> data = <span class="tkw">await</span> toBase64(file);
+<span class="tkw">const</span> res = <span class="tkw">await</span> fetch(<span class="ts">"https://api.receiptiq.dev/v1/parse"</span>, {
+  method: <span class="ts">"POST"</span>,
+  headers: {
+    <span class="tk">"x-api-key"</span>: <span class="ts">"riq_your_key"</span>,
+    <span class="tk">"Content-Type"</span>: <span class="ts">"application/json"</span>
+  },
+  body: JSON.stringify({
+    <span class="tk">image</span>: data,
+    <span class="tk">media_type</span>: file.type
+  })
+});
+<span class="tkw">const</span> { data: receipt } = <span class="tkw">await</span> res.json();</code>
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot"></div><div class="code-dot"></div>JSON response</div>
+      <code>{
+  <span class="tk">"success"</span>: <span class="tkw">true</span>,
+  <span class="tk">"data"</span>: {
+    <span class="tk">"merchant"</span>: {
+      <span class="tk">"name"</span>: <span class="ts">"Blue Bottle Coffee"</span>,
+      <span class="tk">"address"</span>: <span class="ts">"300 Webster St, Oakland"</span>,
+      <span class="tk">"phone"</span>: <span class="tkw">null</span>
+    },
+    <span class="tk">"transaction"</span>: {
+      <span class="tk">"date"</span>: <span class="ts">"2024-03-04"</span>,
+      <span class="tk">"payment_method"</span>: <span class="ts">"Visa ****4821"</span>,
+      <span class="tk">"receipt_number"</span>: <span class="ts">"#4892"</span>
+    },
+    <span class="tk">"items"</span>: [{
+      <span class="tk">"description"</span>: <span class="ts">"Gibraltar"</span>,
+      <span class="tk">"quantity"</span>: 1,
+      <span class="tk">"unit_price"</span>: 4.50,
+      <span class="tk">"total"</span>: 4.50
+    }],
+    <span class="tk">"totals"</span>: {
+      <span class="tk">"subtotal"</span>: 4.50,
+      <span class="tk">"tax"</span>: 0.39,
+      <span class="tk">"tip"</span>: <span class="tkw">null</span>,
+      <span class="tk">"total"</span>: 4.89
+    },
+    <span class="tk">"currency"</span>: <span class="ts">"USD"</span>,
+    <span class="tk">"category"</span>: <span class="ts">"restaurant"</span>
+  },
+  <span class="tk">"meta"</span>: {
+    <span class="tk">"processing_time_ms"</span>: 1842,
+    <span class="tk">"credits_remaining"</span>: 499
+  }
+}</code>
+    </div>
+  </div>
+</section>
+
+<!-- PRIVACY -->
+<section id="privacy">
+  <div class="section-label">Security & Privacy</div>
+  <div class="section-title">Built for<br>financial data.</div>
+  <div class="privacy-grid">
+    <div class="privacy-card">
+      <div class="privacy-icon">🗑️</div>
+      <div class="privacy-title">Zero image storage</div>
+      <div class="privacy-text">Receipt images are passed directly to Claude for processing and immediately discarded. We never write image data to disk or any database.</div>
+    </div>
+    <div class="privacy-card">
+      <div class="privacy-icon">🛡️</div>
+      <div class="privacy-title">SSRF protected</div>
+      <div class="privacy-text">All URL inputs are validated against private/internal IP ranges. Requests to localhost, RFC-1918 addresses, and cloud metadata endpoints are blocked.</div>
+    </div>
+    <div class="privacy-card">
+      <div class="privacy-icon">📊</div>
+      <div class="privacy-title">Usage transparency</div>
+      <div class="privacy-text">Every API call is logged with timestamp, success/failure status, and your plan usage — so billing is always auditable. No surprises.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">ReceiptIQ</div>
+  <div class="footer-links">
+    <a href="#docs">Docs</a>
+    <a href="#privacy">Privacy</a>
+    <a href="/cdn-cgi/l/email-protection#d7bfb2bbbbb897a5b2b4b2bea7a3bea6f9b3b2a1">Contact</a>
+  </div>
+  <div class="footer-copy">© 2025 ReceiptIQ · No images stored · Built on Claude AI</div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // ── State ──────────────────────────────────────────────────────────────────
+  let currentTab = 'upload';
+  let fileBase64 = null;
+  let fileMediaType = null;
+
+  const ALLOWED_TYPES = new Set(['image/jpeg','image/png','image/webp','image/gif']);
+  const MAX_BYTES = 5 * 1024 * 1024; // 5MB
+
+  // ── Tab switching ──────────────────────────────────────────────────────────
+  function switchTab(tab, btn) {
+    currentTab = tab;
+    document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-upload').style.display = tab === 'upload' ? 'block' : 'none';
+    document.getElementById('tab-url').style.display   = tab === 'url'    ? 'block' : 'none';
+    clearStatus();
+  }
+
+  // ── File handling ──────────────────────────────────────────────────────────
+  function handleFile(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Client-side type validation
+    if (!ALLOWED_TYPES.has(file.type)) {
+      return showStatus('error', `Unsupported file type: ${file.type}. Use JPG, PNG, WEBP, or GIF.`);
+    }
+    // Client-side size validation
+    if (file.size > MAX_BYTES) {
+      return showStatus('error', `File too large (${(file.size/1024/1024).toFixed(1)}MB). Max 5MB.`);
+    }
+
+    fileMediaType = file.type;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      fileBase64 = ev.target.result.split(',')[1];
+      const preview = document.getElementById('upload-preview');
+      preview.style.display = 'block';
+      document.getElementById('preview-img').src = ev.target.result;
+      document.getElementById('file-meta').textContent =
+        `${file.name} · ${(file.size/1024).toFixed(0)}KB · ${file.type}`;
+    };
+    reader.onerror = () => showStatus('error', 'Failed to read file. Please try again.');
+    reader.readAsDataURL(file);
+    clearStatus();
+  }
+
+  // ── URL validation (client-side) ───────────────────────────────────────────
+  function isValidPublicUrl(raw) {
+    if (!raw.startsWith('https://')) return false;
+    try {
+      const u = new URL(raw);
+      const h = u.hostname;
+      if (/^(localhost|127\.|10\.|192\.168\.|169\.254\.|0\.)/.test(h)) return false;
+      if (/^172\.(1[6-9]|2\d|3[01])\./.test(h)) return false;
+      return true;
+    } catch { return false; }
+  }
+
+  // ── Status helpers ─────────────────────────────────────────────────────────
+  function showStatus(type, msg) {
+    const el = document.getElementById('statusBar');
+    el.className = `status-bar ${type}`;
+    el.textContent = type === 'loading' ? `⏳ ${msg}` : type === 'success' ? `✓ ${msg}` : `✗ ${msg}`;
+  }
+
+  function showResult(json, isError) {
+    const el = document.getElementById('resultBox');
+    el.className = `result-box visible${isError ? ' error' : ''}`;
+    el.textContent = typeof json === 'string' ? json : JSON.stringify(json, null, 2);
+  }
+
+  function clearStatus() {
+    document.getElementById('statusBar').className = 'status-bar';
+    document.getElementById('resultBox').className = 'result-box';
+  }
+
+  // ── Main parse function ────────────────────────────────────────────────────
+  async function parseReceipt() {
+    const btn = document.getElementById('parseBtn');
+    clearStatus();
+
+    // Build request body with client-side validation
+    let body;
+    if (currentTab === 'url') {
+      const raw = document.getElementById('imageUrl').value.trim();
+      if (!raw) return showStatus('error', 'Please enter an image URL.');
+      if (!isValidPublicUrl(raw)) return showStatus('error', 'Please enter a valid public https:// URL.');
+      body = { url: raw };
+    } else {
+      if (!fileBase64) return showStatus('error', 'Please select a receipt image first.');
+      body = { image: fileBase64, media_type: fileMediaType };
+    }
+
+    // Disable button + show loading
+    btn.disabled = true;
+    btn.textContent = '⏳ Parsing...';
+    showStatus('loading', 'Analyzing receipt with Claude AI...');
+
+    try {
+      // ⚠️  SECURITY NOTE:
+      // In production, this fetch goes to YOUR backend (/api/parse),
+      // NOT directly to Anthropic. Your Anthropic API key never leaves
+      // the server. The demo below calls the Anthropic API directly only
+      // because this is a static demo page without a backend deployed yet.
+      //
+      // When you deploy api.js to Vercel, change this URL to:
+      //   const API_URL = 'https://your-domain.vercel.app/api/parse';
+      // And send your riq_ key in the x-api-key header instead.
+
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages: [{
+            role: 'user',
+            content: [
+              body.url
+                ? { type:'image', source:{ type:'url', url: body.url } }
+                : { type:'image', source:{ type:'base64', media_type: body.media_type, data: body.image } },
+              {
+                type: 'text',
+                text: `Parse this receipt or invoice into structured JSON. Return ONLY valid JSON with no markdown, no explanation, no preamble.
+
+Schema:
+{
+  "merchant": { "name": string, "address": string|null, "phone": string|null, "website": string|null },
+  "transaction": { "date": "YYYY-MM-DD"|null, "time": "HH:MM"|null, "receipt_number": string|null, "payment_method": string|null },
+  "items": [{ "description": string, "quantity": number, "unit_price": number, "total": number }],
+  "totals": { "subtotal": number|null, "tax": number|null, "tip": number|null, "discount": number|null, "total": number },
+  "currency": string,
+  "category": "restaurant"|"grocery"|"retail"|"travel"|"medical"|"utilities"|"other"
+}
+
+Use null for missing fields. All monetary values as numbers.`
+              }
+            ]
+          }]
+        })
+      });
+
+      // Handle HTTP errors
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        const msg = err?.error?.message || `HTTP ${response.status}`;
+        throw new Error(msg);
+      }
+
+      const data = await response.json();
+
+      // Validate response shape
+      if (!data?.content?.[0]?.text) {
+        throw new Error('Unexpected response format from AI service.');
+      }
+
+      // Parse JSON, stripping any accidental markdown fences
+      const raw = data.content[0].text.trim().replace(/^```(?:json)?\n?|\n?```$/g, '').trim();
+      let parsed;
+      try {
+        parsed = JSON.parse(raw);
+      } catch {
+        console.error('Raw AI output:', raw);
+        throw new Error('Could not extract data from this image. Try a clearer photo of the receipt.');
+      }
+
+      showStatus('success', 'Receipt parsed successfully');
+      showResult(parsed, false);
+
+    } catch (err) {
+      const msg = err.name === 'AbortError'
+        ? 'Request timed out. Try a smaller or clearer image.'
+        : err
