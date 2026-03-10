@@ -4,6 +4,7 @@
   "type": "module",
   "dependencies": {
     "@anthropic-ai/sdk": "latest",
-    "stripe": "latest"
+    "stripe": "latest" 
   }
+
 }
