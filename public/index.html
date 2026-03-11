@@ -659,13 +659,9 @@ curl -X POST \
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          messages: [{
-            role: 'user',
-            content: [
-              body.url
-                ? { type:'image', source:{ type:'url', url: body.url } }
-                : { type:'image', source:{ type:'base64', media_type: body.media_type, data: body.image } },
+          'x-api-key': document.getElementById('apiKey').value.trim()
+  },
+  body: JSON.stringify(body)
               {
                 type: 'text',
                 text: `Parse this receipt or invoice into structured JSON. Return ONLY valid JSON with no markdown, no explanation, no preamble.
