@@ -41,10 +41,9 @@
     opacity: 0.4;
   }
 
-  /* ── NAV ── */
+  /* NAV */
   nav {
-    position: fixed; top: 0; left: 0; right: 0;
-    z-index: 100;
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
     display: flex; align-items: center; justify-content: space-between;
     padding: 1.2rem 2.5rem;
     border-bottom: 1px solid var(--rule);
@@ -59,12 +58,12 @@
   .nav-cta { background:var(--green); color:var(--cream)!important; opacity:1!important; padding:0.5rem 1.2rem; border-radius:2px; }
   .nav-cta:hover { background:var(--green-bright)!important; }
 
-  /* ── TICKER ── */
+  /* TICKER */
   .ticker { background:var(--green); color:var(--cream); padding:0.5rem 0; overflow:hidden; white-space:nowrap; margin-top:64px; }
   .ticker-inner { display:inline-block; animation:ticker 22s linear infinite; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; }
   @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
 
-  /* ── HERO ── */
+  /* HERO */
   .hero {
     min-height: calc(100vh - 64px);
     display: grid; grid-template-columns: 1fr 1fr;
@@ -79,20 +78,16 @@
     background:var(--paper); z-index:-1;
     border-left:1px solid var(--rule);
   }
-
   .hero-eyebrow {
     font-size:0.68rem; letter-spacing:0.2em; text-transform:uppercase;
     color:var(--green); margin-bottom:1.2rem;
     display:flex; align-items:center; gap:0.6rem;
   }
   .hero-eyebrow::before { content:''; display:inline-block; width:24px; height:1px; background:var(--green); }
-
   h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(4rem,8vw,7rem); line-height:0.92; letter-spacing:0.02em; margin-bottom:1.5rem; }
   h1 em { font-family:'Instrument Serif',serif; font-style:italic; color:var(--green); }
-
   .hero-sub { font-size:0.82rem; line-height:1.8; opacity:0.65; max-width:420px; margin-bottom:2.5rem; }
   .hero-actions { display:flex; gap:1rem; align-items:center; }
-
   .btn-primary {
     background:var(--green); color:var(--cream); border:none;
     padding:0.9rem 2rem; font-family:'DM Mono',monospace;
@@ -101,7 +96,6 @@
     text-decoration:none; display:inline-block;
   }
   .btn-primary:hover { background:var(--green-bright); transform:translateY(-1px); }
-
   .btn-ghost {
     color:var(--ink); text-decoration:none; font-size:0.75rem;
     letter-spacing:0.08em; opacity:0.5; display:flex; align-items:center;
@@ -109,23 +103,19 @@
   }
   .btn-ghost:hover { opacity:1; }
 
-  /* ── DEMO PANEL ── */
+  /* DEMO PANEL */
   .demo-panel {
     background:var(--paper); border:1px solid var(--rule);
     border-radius:4px; overflow:hidden;
     box-shadow:8px 8px 0 rgba(0,0,0,0.06);
     animation: fadeUp 0.6s 0.3s ease both;
   }
-  .demo-tabs { display:flex; border-bottom:1px solid var(--rule); background:var(--cream); }
-  .demo-tab {
-    padding:0.75rem 1.2rem; font-size:0.68rem; letter-spacing:0.1em;
-    text-transform:uppercase; cursor:pointer; border:none; background:none;
-    color:var(--ink); opacity:0.4; border-right:1px solid var(--rule);
-    transition:all 0.2s; font-family:'DM Mono',monospace;
+  .demo-header {
+    padding:0.75rem 1.2rem; border-bottom:1px solid var(--rule);
+    background:var(--cream); font-size:0.68rem; letter-spacing:0.1em;
+    text-transform:uppercase; opacity:0.6;
   }
-  .demo-tab.active { opacity:1; background:var(--paper); border-bottom:2px solid var(--green); margin-bottom:-1px; }
   .demo-body { padding:1.2rem; }
-
   .demo-upload {
     border:2px dashed var(--rule); border-radius:3px; padding:2rem;
     text-align:center; cursor:pointer; transition:all 0.2s;
@@ -135,20 +125,17 @@
   .demo-upload input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
   .upload-icon { font-size:2rem; margin-bottom:0.5rem; }
   .upload-label { font-size:0.72rem; opacity:0.5; letter-spacing:0.06em; }
-
   #upload-preview { display:none; margin-top:0.8rem; }
   #preview-img { width:100%; max-height:160px; object-fit:cover; border-radius:2px; border:1px solid var(--rule); }
   .file-meta { font-size:0.65rem; opacity:0.5; margin-top:0.3rem; }
-
-  .url-input {
+  .api-key-input {
     width:100%; padding:0.7rem 1rem; background:var(--cream);
     border:1px solid var(--rule); border-radius:2px;
     font-family:'DM Mono',monospace; font-size:0.75rem; color:var(--ink);
-    outline:none; transition:border-color 0.2s;
+    outline:none; transition:border-color 0.2s; margin-top:0.8rem;
   }
-  .url-input:focus { border-color:var(--green); }
-  .url-hint { font-size:0.65rem; opacity:0.4; margin-top:0.4rem; }
-
+  .api-key-input:focus { border-color:var(--green); }
+  .api-key-hint { font-size:0.65rem; opacity:0.4; margin-top:0.3rem; }
   .demo-parse-btn {
     width:100%; background:var(--green); color:var(--cream); border:none;
     padding:0.8rem; font-family:'DM Mono',monospace; font-size:0.75rem;
@@ -157,21 +144,12 @@
   }
   .demo-parse-btn:hover:not(:disabled) { background:var(--green-bright); }
   .demo-parse-btn:disabled { opacity:0.45; cursor:not-allowed; }
-
-  .demo-notice {
-    font-size:0.62rem; opacity:0.45; text-align:center;
-    margin-top:0.6rem; line-height:1.6;
-  }
-
-  .status-bar {
-    font-size:0.68rem; padding:0.5rem 0.8rem; border-radius:2px;
-    margin-top:0.8rem; display:none; line-height:1.5;
-  }
+  .demo-notice { font-size:0.62rem; opacity:0.45; text-align:center; margin-top:0.6rem; line-height:1.6; }
+  .status-bar { font-size:0.68rem; padding:0.5rem 0.8rem; border-radius:2px; margin-top:0.8rem; display:none; line-height:1.5; }
   .status-bar.loading { display:block; background:var(--amber-light); color:var(--amber); animation:pulse 1.4s infinite; }
   .status-bar.success { display:block; background:var(--green-light); color:var(--green); }
   .status-bar.error   { display:block; background:#fdecea; color:var(--red); }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
-
   .result-box {
     margin-top:0.8rem; background:var(--ink); color:#7ec87e;
     padding:1rem; border-radius:3px; font-size:0.68rem; line-height:1.8;
@@ -181,7 +159,7 @@
   .result-box.visible { display:block; }
   .result-box.error { color:#e07070; }
 
-  /* ── STATS ── */
+  /* STATS */
   .stats-bar {
     border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);
     padding:1.5rem 5rem; display:flex; gap:4rem; background:var(--paper);
@@ -190,7 +168,7 @@
   .stat-num { font-family:'Bebas Neue',sans-serif; font-size:2rem; color:var(--green); letter-spacing:0.05em; }
   .stat-label { font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; opacity:0.45; }
 
-  /* ── SECURITY BADGE ── */
+  /* SECURITY STRIP */
   .security-strip {
     background:var(--ink); color:var(--cream);
     padding:0.6rem 5rem; font-size:0.65rem;
@@ -200,11 +178,10 @@
   .sec-item { display:flex; align-items:center; gap:0.4rem; opacity:0.7; }
   .sec-item::before { content:'🔒'; font-size:0.7rem; }
 
-  /* ── PRICING ── */
+  /* PRICING */
   #pricing { padding:6rem 5rem; background:var(--cream); }
   .section-label { font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--green); margin-bottom:0.6rem; }
   .section-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(2.5rem,5vw,4rem); line-height:1; margin-bottom:3rem; }
-
   .pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
   .pricing-card {
     background:var(--paper); border:1px solid var(--rule); border-radius:3px;
@@ -239,7 +216,7 @@
   .pricing-card.featured .pricing-btn { color:var(--cream); border-color:rgba(255,255,255,0.4); }
   .pricing-btn:hover { background:var(--green); color:var(--cream); border-color:var(--green); }
 
-  /* ── DOCS ── */
+  /* DOCS */
   #docs { padding:6rem 5rem; background:var(--paper); border-top:1px solid var(--rule); }
   .code-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; margin-top:3rem; }
   .code-block { background:var(--ink); border-radius:3px; overflow:hidden; }
@@ -259,7 +236,7 @@
   .tc { color:rgba(255,255,255,0.25); font-style:italic; }
   .tkw { color:#e8d07e; }
 
-  /* ── PRIVACY ── */
+  /* PRIVACY */
   #privacy { padding:4rem 5rem; background:var(--cream); border-top:1px solid var(--rule); }
   .privacy-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; margin-top:2rem; }
   .privacy-card { padding:1.5rem; background:var(--paper); border:1px solid var(--rule); border-radius:3px; }
@@ -267,7 +244,7 @@
   .privacy-title { font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.5rem; }
   .privacy-text { font-size:0.7rem; opacity:0.55; line-height:1.8; }
 
-  /* ── FOOTER ── */
+  /* FOOTER */
   footer {
     border-top:1px solid var(--rule); padding:2.5rem 5rem;
     display:flex; align-items:center; justify-content:space-between;
@@ -279,7 +256,7 @@
   .footer-links a:hover { opacity:1; }
   .footer-copy { font-size:0.65rem; opacity:0.35; letter-spacing:0.06em; }
 
-  /* ── ANIMATIONS ── */
+  /* ANIMATIONS */
   @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
   .hero-content > * { animation:fadeUp 0.6s ease both; }
   .hero-eyebrow { animation-delay:0.1s; }
@@ -287,7 +264,7 @@
   .hero-sub { animation-delay:0.3s; }
   .hero-actions { animation-delay:0.4s; }
 
-  /* ── RESPONSIVE ── */
+  /* RESPONSIVE */
   @media(max-width:900px){
     .hero{ grid-template-columns:1fr; padding:4rem 2rem 3rem; }
     .hero::after{ display:none; }
@@ -326,7 +303,7 @@
     <div class="hero-eyebrow">Receipt Parsing API</div>
     <h1>Any Receipt.<br><em>Clean</em><br>JSON.</h1>
     <p class="hero-sub">
-      One POST request. Upload a photo, scan, or PDF of any receipt or invoice — get back structured data in under 2 seconds. No templates. No training. Just results.
+      One POST request. Upload a photo or scan of any receipt or invoice — get back structured JSON in under 2 seconds. No templates. No training. Just results.
     </p>
     <div class="hero-actions">
       <a href="#pricing" class="btn-primary">Get API Key →</a>
@@ -336,37 +313,26 @@
 
   <!-- DEMO PANEL -->
   <div class="demo-panel" id="demo">
-    <div class="demo-tabs">
-      <button class="demo-tab active" onclick="switchTab('upload',this)">Upload Image</button>
-      <button class="demo-tab" onclick="switchTab('url',this)">Image URL</button>
-    </div>
+    <div class="demo-header">Live Demo — Upload a Receipt</div>
     <div class="demo-body">
 
-      <div id="tab-upload">
-        <div class="demo-upload" id="uploadZone">
-          <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onchange="handleFile(event)">
-          <div class="upload-icon">🧾</div>
-          <div style="font-size:0.8rem;margin-bottom:0.3rem;">Drop a receipt image here</div>
-          <div class="upload-label">JPG, PNG, WEBP · max 5MB</div>
-        </div>
-        <div id="upload-preview">
-          <img id="preview-img" alt="Receipt preview">
-          <div class="file-meta" id="file-meta"></div>
-        </div>
+      <div class="demo-upload" id="uploadZone">
+        <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onchange="handleFile(event)">
+        <div class="upload-icon">🧾</div>
+        <div style="font-size:0.8rem;margin-bottom:0.3rem;">Drop a receipt image here</div>
+        <div class="upload-label">JPG, PNG, WEBP · max 5MB</div>
       </div>
 
-      <div id="tab-url" style="display:none;">
-        <input type="text" class="url-input" id="imageUrl" placeholder="https://example.com/receipt.jpg">
-        <div class="url-hint">Must be a public https:// image URL</div>
+      <div id="upload-preview">
+        <img id="preview-img" alt="Receipt preview">
+        <div class="file-meta" id="file-meta"></div>
       </div>
-<div style="margin-bottom:1rem;">
-  <input type="text" id="apiKey" placeholder="Enter your riq_live_ API key to test" 
-    style="width:100%;padding:0.6rem;font-family:'Courier New',monospace;font-size:0.8rem;border:1px solid #d4cfc4;border-radius:2px;box-sizing:border-box;">
-</div>
-      <button class="demo-parse-btn" onclick="parseReceipt()" id="parseBtn">⚡ Parse Receipt</button>
-      <div class="demo-notice">
-        Demo routes through a secure proxy — your images are never stored.
-      </div>
+
+      <input type="text" class="api-key-input" id="apiKey" placeholder="Enter your riq_live_ API key">
+      <div class="api-key-hint">Buy credits below to get a key. Each parse uses 1 credit.</div>
+
+      <button class="demo-parse-btn" id="parseBtn" onclick="parseReceipt()">⚡ Parse Receipt</button>
+      <div class="demo-notice">Your images are never stored · Powered by Claude AI</div>
 
       <div class="status-bar" id="statusBar"></div>
       <div class="result-box" id="resultBox"></div>
@@ -379,7 +345,7 @@
   <div class="stat"><div class="stat-num">2s</div><div class="stat-label">Avg response</div></div>
   <div class="stat"><div class="stat-num">99.2%</div><div class="stat-label">Parse accuracy</div></div>
   <div class="stat"><div class="stat-num">40+</div><div class="stat-label">Currencies</div></div>
-  <div class="stat"><div class="stat-num">$0.02</div><div class="stat-label">Cost per receipt</div></div>
+  <div class="stat"><div class="stat-num">$0.02</div><div class="stat-label">Per receipt</div></div>
   <div class="stat"><div class="stat-num">0</div><div class="stat-label">Images stored</div></div>
 </div>
 
@@ -387,8 +353,8 @@
 <div class="security-strip">
   <div class="sec-item">No image storage</div>
   <div class="sec-item">SSRF protected</div>
-  <div class="sec-item">Rate limited per key</div>
-  <div class="sec-item">Persistent usage tracking</div>
+  <div class="sec-item">Credit-based billing</div>
+  <div class="sec-item">Usage tracking</div>
   <div class="sec-item">25s timeout</div>
   <div class="sec-item">5MB payload limit</div>
 </div>
@@ -397,7 +363,7 @@
 <section id="pricing">
   <div class="section-label">Simple pricing</div>
   <div class="section-title">$0.02 per receipt.<br>Buy when you need.</div>
-  <p style="font-size:0.8rem;opacity:0.55;margin-bottom:2.5rem;max-width:480px;">No subscriptions. No monthly fees. Buy a credit pack, each receipt parse uses one credit. Credits never expire. Buy more anytime.</p>
+  <p style="font-size:0.8rem;opacity:0.55;margin-bottom:2.5rem;max-width:480px;">No subscriptions. No monthly fees. Buy a credit pack — each receipt parse uses one credit. Credits never expire.</p>
   <div class="pricing-grid">
     <div class="pricing-card">
       <div class="pricing-tier">Starter Pack</div>
@@ -443,13 +409,13 @@
   <div class="code-grid">
     <div>
       <div class="code-block">
-        <div class="code-header"><div class="code-dot"></div><div class="code-dot"></div>cURL — image URL</div>
-        <code><span class="tc"># Parse via public image URL</span>
+        <div class="code-header"><div class="code-dot"></div><div class="code-dot"></div>cURL — file upload</div>
+        <code><span class="tc"># Base64 encode your image then POST</span>
 curl -X POST \
-  https://api.receiptiq.dev/v1/parse \
-  -H <span class="ts">"x-api-key: riq_your_key"</span> \
+  https://receiptiq-zeta.vercel.app/api/parse \
+  -H <span class="ts">"x-api-key: riq_live_your_key"</span> \
   -H <span class="ts">"Content-Type: application/json"</span> \
-  -d <span class="ts">'{"url":"https://example.com/receipt.jpg"}'</span></code>
+  -d <span class="ts">'{"image":"&lt;base64&gt;","media_type":"image/jpeg"}'</span></code>
       </div>
       <div class="code-block" style="margin-top:1rem;">
         <div class="code-header"><div class="code-dot"></div><div class="code-dot"></div>JavaScript — file upload</div>
@@ -460,16 +426,13 @@ curl -X POST \
 });
 
 <span class="tkw">const</span> data = <span class="tkw">await</span> toBase64(file);
-<span class="tkw">const</span> res = <span class="tkw">await</span> fetch(<span class="ts">"https://api.receiptiq.dev/v1/parse"</span>, {
+<span class="tkw">const</span> res = <span class="tkw">await</span> fetch(<span class="ts">"https://receiptiq-zeta.vercel.app/api/parse"</span>, {
   method: <span class="ts">"POST"</span>,
   headers: {
-    <span class="tk">"x-api-key"</span>: <span class="ts">"riq_your_key"</span>,
+    <span class="tk">"x-api-key"</span>: <span class="ts">"riq_live_your_key"</span>,
     <span class="tk">"Content-Type"</span>: <span class="ts">"application/json"</span>
   },
-  body: JSON.stringify({
-    <span class="tk">image</span>: data,
-    <span class="tk">media_type</span>: file.type
-  })
+  body: JSON.stringify({ <span class="tk">image</span>: data, <span class="tk">media_type</span>: file.type })
 });
 <span class="tkw">const</span> { data: receipt } = <span class="tkw">await</span> res.json();</code>
       </div>
@@ -526,12 +489,12 @@ curl -X POST \
     <div class="privacy-card">
       <div class="privacy-icon">🛡️</div>
       <div class="privacy-title">SSRF protected</div>
-      <div class="privacy-text">All URL inputs are validated against private/internal IP ranges. Requests to localhost, RFC-1918 addresses, and cloud metadata endpoints are blocked.</div>
+      <div class="privacy-text">All inputs are validated against private/internal IP ranges. Requests to localhost, RFC-1918 addresses, and cloud metadata endpoints are blocked.</div>
     </div>
     <div class="privacy-card">
       <div class="privacy-icon">📊</div>
       <div class="privacy-title">Usage transparency</div>
-      <div class="privacy-text">Every API call is logged with timestamp, success/failure status, and your plan usage — so billing is always auditable. No surprises.</div>
+      <div class="privacy-text">Every API call is logged with timestamp and success/failure status. Your credit balance is always returned in the response — no billing surprises.</div>
     </div>
   </div>
 </section>
@@ -541,81 +504,49 @@ curl -X POST \
   <div class="footer-links">
     <a href="#docs">Docs</a>
     <a href="#privacy">Privacy</a>
-    <a href="/cdn-cgi/l/email-protection#d7bfb2bbbbb897a5b2b4b2bea7a3bea6f9b3b2a1">Contact</a>
+    <a href="mailto:hello@receiptiq.dev">Contact</a>
   </div>
   <div class="footer-copy">© 2025 ReceiptIQ · No images stored · Built on Claude AI</div>
 </footer>
 
+<script>
+  var fileBase64 = null;
+  var fileMediaType = null;
+  var ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+  var MAX_BYTES = 5 * 1024 * 1024;
 
-  // ── State ──────────────────────────────────────────────────────────────────
-  let currentTab = 'upload';
-  let fileBase64 = null;
-  let fileMediaType = null;
-
-  const ALLOWED_TYPES = new Set(['image/jpeg','image/png','image/webp','image/gif']);
-  const MAX_BYTES = 5 * 1024 * 1024; // 5MB
-
-  // ── Tab switching ──────────────────────────────────────────────────────────
-  function switchTab(tab, btn) {
-    currentTab = tab;
-    document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('tab-upload').style.display = tab === 'upload' ? 'block' : 'none';
-    document.getElementById('tab-url').style.display   = tab === 'url'    ? 'block' : 'none';
-    clearStatus();
-  }
-
-  // ── File handling ──────────────────────────────────────────────────────────
   function handleFile(e) {
-    const file = e.target.files[0];
+    var file = e.target.files[0];
     if (!file) return;
-
-    // Client-side type validation
-    if (!ALLOWED_TYPES.has(file.type)) {
-      return showStatus('error', `Unsupported file type: ${file.type}. Use JPG, PNG, WEBP, or GIF.`);
+    if (ALLOWED_TYPES.indexOf(file.type) === -1) {
+      return showStatus('error', 'Unsupported file type. Use JPG, PNG, WEBP, or GIF.');
     }
-    // Client-side size validation
     if (file.size > MAX_BYTES) {
-      return showStatus('error', `File too large (${(file.size/1024/1024).toFixed(1)}MB). Max 5MB.`);
+      return showStatus('error', 'File too large (' + (file.size/1024/1024).toFixed(1) + 'MB). Max 5MB.');
     }
-
     fileMediaType = file.type;
-    const reader = new FileReader();
-    reader.onload = ev => {
+    var reader = new FileReader();
+    reader.onload = function(ev) {
       fileBase64 = ev.target.result.split(',')[1];
-      const preview = document.getElementById('upload-preview');
-      preview.style.display = 'block';
+      document.getElementById('upload-preview').style.display = 'block';
       document.getElementById('preview-img').src = ev.target.result;
       document.getElementById('file-meta').textContent =
-        `${file.name} · ${(file.size/1024).toFixed(0)}KB · ${file.type}`;
+        file.name + ' · ' + (file.size/1024).toFixed(0) + 'KB · ' + file.type;
     };
-    reader.onerror = () => showStatus('error', 'Failed to read file. Please try again.');
+    reader.onerror = function() { showStatus('error', 'Failed to read file. Please try again.'); };
     reader.readAsDataURL(file);
     clearStatus();
   }
 
-  // ── URL validation (client-side) ───────────────────────────────────────────
-  function isValidPublicUrl(raw) {
-    if (!raw.startsWith('https://')) return false;
-    try {
-      const u = new URL(raw);
-      const h = u.hostname;
-      if (/^(localhost|127\.|10\.|192\.168\.|169\.254\.|0\.)/.test(h)) return false;
-      if (/^172\.(1[6-9]|2\d|3[01])\./.test(h)) return false;
-      return true;
-    } catch { return false; }
-  }
-
-  // ── Status helpers ─────────────────────────────────────────────────────────
   function showStatus(type, msg) {
-    const el = document.getElementById('statusBar');
-    el.className = `status-bar ${type}`;
-    el.textContent = type === 'loading' ? `⏳ ${msg}` : type === 'success' ? `✓ ${msg}` : `✗ ${msg}`;
+    var el = document.getElementById('statusBar');
+    el.className = 'status-bar ' + type;
+    el.textContent = type === 'loading' ? '⏳ ' + msg : type === 'success' ? '✓ ' + msg : '✗ ' + msg;
   }
 
   function showResult(json, isError) {
-    const el = document.getElementById('resultBox');
-    el.className = `result-box visible${isError ? ' error' : ''}`;
+    var el = document.getElementById('resultBox');
+    el.className = 'result-box visible' + (isError ? ' error' : '');
     el.textContent = typeof json === 'string' ? json : JSON.stringify(json, null, 2);
   }
 
@@ -624,97 +555,53 @@ curl -X POST \
     document.getElementById('resultBox').className = 'result-box';
   }
 
-  // ── Main parse function ────────────────────────────────────────────────────
-  async function parseReceipt() {
-    const btn = document.getElementById('parseBtn');
+  function parseReceipt() {
+    var btn = document.getElementById('parseBtn');
     clearStatus();
 
-    // Build request body with client-side validation
-    let body;
-    if (currentTab === 'url') {
-      const raw = document.getElementById('imageUrl').value.trim();
-      if (!raw) return showStatus('error', 'Please enter an image URL.');
-      if (!isValidPublicUrl(raw)) return showStatus('error', 'Please enter a valid public https:// URL.');
-      body = { url: raw };
-    } else {
-      if (!fileBase64) return showStatus('error', 'Please select a receipt image first.');
-      body = { image: fileBase64, media_type: fileMediaType };
+    if (!fileBase64) {
+      return showStatus('error', 'Please select a receipt image first.');
+    }
+    var apiKey = document.getElementById('apiKey').value.trim();
+    if (!apiKey) {
+      return showStatus('error', 'Please enter your riq_live_ API key.');
     }
 
-    // Disable button + show loading
     btn.disabled = true;
     btn.textContent = '⏳ Parsing...';
     showStatus('loading', 'Analyzing receipt with Claude AI...');
 
-    try {
-      // ⚠️  SECURITY NOTE:
-      // In production, this fetch goes to YOUR backend (/api/parse),
-      // NOT directly to Anthropic. Your Anthropic API key never leaves
-      // the server. The demo below calls the Anthropic API directly only
-      // because this is a static demo page without a backend deployed yet.
-      //
-      // When you deploy api.js to Vercel, change this URL to:
-      //   const API_URL = 'https://your-domain.vercel.app/api/parse';
-      // And send your riq_ key in the x-api-key header instead.
-
-      const response = await fetch('/api/parse', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'x-api-key': document.getElementById('apiKey').value.trim()
-  },
-  body: JSON.stringify(body)
-});
-  body: JSON.stringify(body)
-              {
-                type: 'text',
-                text: `Parse this receipt or invoice into structured JSON. Return ONLY valid JSON with no markdown, no explanation, no preamble.
-
-Schema:
-{
-  "merchant": { "name": string, "address": string|null, "phone": string|null, "website": string|null },
-  "transaction": { "date": "YYYY-MM-DD"|null, "time": "HH:MM"|null, "receipt_number": string|null, "payment_method": string|null },
-  "items": [{ "description": string, "quantity": number, "unit_price": number, "total": number }],
-  "totals": { "subtotal": number|null, "tax": number|null, "tip": number|null, "discount": number|null, "total": number },
-  "currency": string,
-  "category": "restaurant"|"grocery"|"retail"|"travel"|"medical"|"utilities"|"other"
-}
-
-Use null for missing fields. All monetary values as numbers.`
-              }
-            ]
-          }]
-        })
+    fetch('/api/parse', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey
+      },
+      body: JSON.stringify({ image: fileBase64, media_type: fileMediaType })
+    })
+    .then(function(response) {
+      return response.json().then(function(data) {
+        return { ok: response.ok, status: response.status, data: data };
       });
-
-      // Handle HTTP errors
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        const msg = err?.error?.message || `HTTP ${response.status}`;
-        throw new Error(msg);
+    })
+    .then(function(result) {
+      btn.disabled = false;
+      btn.textContent = '⚡ Parse Receipt';
+      if (!result.ok) {
+        showStatus('error', result.data.error || ('Error ' + result.status));
+        showResult(result.data, true);
+      } else {
+        showStatus('success', 'Parsed successfully · ' + result.data.meta.credits_remaining + ' credits remaining');
+        showResult(result.data, false);
       }
+    })
+    .catch(function() {
+      btn.disabled = false;
+      btn.textContent = '⚡ Parse Receipt';
+      showStatus('error', 'Request failed. Check your connection and try again.');
+    });
+  }
+</script>
 
-      const data = await response.json();
-
-      // Validate response shape
-      if (!data?.content?.[0]?.text) {
-        throw new Error('Unexpected response format from AI service.');
-      }
-
-      // Parse JSON, stripping any accidental markdown fences
-      const raw = data.content[0].text.trim().replace(/^```(?:json)?\n?|\n?```$/g, '').trim();
-      let parsed;
-      try {
-        parsed = JSON.parse(raw);
-      } catch {
-        console.error('Raw AI output:', raw);
-        throw new Error('Could not extract data from this image. Try a clearer photo of the receipt.');
-      }
-
-      showStatus('success', 'Receipt parsed successfully');
-      showResult(parsed, false);
-
-    } catch (err) {
-      const msg = err.name === 'AbortError'
-        ? 'Request timed out. Try a smaller or clearer image.'
-        : err
+</body>
+</html>
