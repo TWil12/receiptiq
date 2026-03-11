@@ -359,7 +359,10 @@
         <input type="text" class="url-input" id="imageUrl" placeholder="https://example.com/receipt.jpg">
         <div class="url-hint">Must be a public https:// image URL</div>
       </div>
-
+<div style="margin-bottom:1rem;">
+  <input type="text" id="apiKey" placeholder="Enter your riq_live_ API key to test" 
+    style="width:100%;padding:0.6rem;font-family:'Courier New',monospace;font-size:0.8rem;border:1px solid #d4cfc4;border-radius:2px;box-sizing:border-box;">
+</div>
       <button class="demo-parse-btn" onclick="parseReceipt()" id="parseBtn">⚡ Parse Receipt</button>
       <div class="demo-notice">
         Demo routes through a secure proxy — your images are never stored.
@@ -654,13 +657,14 @@ curl -X POST \
       //   const API_URL = 'https://your-domain.vercel.app/api/parse';
       // And send your riq_ key in the x-api-key header instead.
 
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          'x-api-key': document.getElementById('apiKey').value.trim()
+      const response = await fetch('/api/parse', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'x-api-key': document.getElementById('apiKey').value.trim()
   },
+  body: JSON.stringify(body)
+});
   body: JSON.stringify(body)
               {
                 type: 'text',
