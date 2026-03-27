@@ -45,7 +45,7 @@ export default async function handler(req, res) {
       mode:                 "payment",   // one-time purchase, not subscription
       payment_method_types: ["card"],
       line_items:           [{ price: PRICE_IDS[pack], quantity: 1 }],
-      success_url:          `${process.env.APP_URL}/welcome?session_id={CHECKOUT_SESSION_ID}`,
+      success_url:          `${process.env.APP_URL}/welcome.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:           `${process.env.APP_URL}/#pricing`,
       allow_promotion_codes: true,
       // Pre-fill email if returning customer comes from their dashboard
