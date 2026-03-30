@@ -183,7 +183,7 @@ async function sendNewKeyEmail(email, rawKey, credits, amountCents) {
     method: "POST",
     headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      from:    "ReceiptIQ <keys@weanol.resend.app>",
+      from:    "ReceiptIQ <onboarding@resend.dev>",
       to:      [email],
       subject: `Your ReceiptIQ API Key — ${credits} credits loaded`,
       html,
@@ -221,7 +221,7 @@ async function sendTopUpEmail(email, credits, newBalance, amountCents) {
     method: "POST",
     headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      from:    "ReceiptIQ <keys@weanol.resend.app>",
+      from:    "ReceiptIQ <onboarding@resend.dev>",
       to:      [email],
       subject: `ReceiptIQ — ${credits} credits added · ${newBalance} total remaining`,
       html,
