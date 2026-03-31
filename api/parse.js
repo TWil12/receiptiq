@@ -42,8 +42,8 @@ async function redis(command, ...args) {
 async function supabase(path, options = {}) {
   const res = await fetch(`${process.env.SUPABASE_URL}/rest/v1${path}`, {
     headers: {
-      apikey:         process.env.SUPABASE_SERVICE_KEY,
-      Authorization:  `Bearer ${process.env.SUPABASE_SERVICE_KEY}`,
+      apikey:         process.env.SUPABASE_SERVICE_KEY_TEST,
+      Authorization:  `Bearer ${process.env.SUPABASE_SERVICE_KEY_TEST}`,
       "Content-Type": "application/json",
       Prefer:         "return=representation",
       ...options.headers,
