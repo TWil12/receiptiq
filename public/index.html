@@ -412,7 +412,7 @@
         <div class="code-header"><div class="code-dot"></div><div class="code-dot"></div>cURL — file upload</div>
         <code><span class="tc"># Base64 encode your image then POST</span>
 curl -X POST \
-  https://receiptiq-zeta.vercel.app/api/parse \
+  https://receiptiq.dev/api/parse \
   -H <span class="ts">"x-api-key: riq_live_your_key"</span> \
   -H <span class="ts">"Content-Type: application/json"</span> \
   -d <span class="ts">'{"image":"&lt;base64&gt;","media_type":"image/jpeg"}'</span></code>
@@ -426,7 +426,7 @@ curl -X POST \
 });
 
 <span class="tkw">const</span> data = <span class="tkw">await</span> toBase64(file);
-<span class="tkw">const</span> res = <span class="tkw">await</span> fetch(<span class="ts">"https://receiptiq-zeta.vercel.app/api/parse"</span>, {
+<span class="tkw">const</span> res = <span class="tkw">await</span> fetch(<span class="ts">"https://receiptiq.dev/api/parse"</span>, {
   method: <span class="ts">"POST"</span>,
   headers: {
     <span class="tk">"x-api-key"</span>: <span class="ts">"riq_live_your_key"</span>,
@@ -506,7 +506,7 @@ curl -X POST \
     <a href="#privacy">Privacy</a>
     <a href="mailto:hello@receiptiq.dev">Contact</a>
   </div>
-  <div class="footer-copy">© 2025 ReceiptIQ · No images stored · Built on Claude AI</div>
+  <div class="footer-copy">© 2025 ReceiptIQ · No images stored </div>
 </footer>
 
 <script>
@@ -569,7 +569,7 @@ curl -X POST \
 
     btn.disabled = true;
     btn.textContent = '⏳ Parsing...';
-    showStatus('loading', 'Analyzing receipt with Claude AI...');
+    showStatus('loading', 'Analyzing receipt...');
 
     fetch('/api/parse', {
       method: 'POST',
