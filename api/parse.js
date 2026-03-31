@@ -93,7 +93,6 @@ async function deductCredit(keyId, currentCredits) {
     `/api_keys?id=eq.${keyId}&credits=eq.${currentCredits}&active=eq.true`,
     {
       method: "PATCH",
-      headers: { Prefer: "return=representation" },
       body: JSON.stringify({ credits: currentCredits - 1 }),
     }
   );
