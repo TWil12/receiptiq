@@ -11,7 +11,7 @@ Most OCR tools are either too slow, require rigid templates, or return "word sou
 ✨ Key Features
 Zero Training: No need to teach the AI what a "Walmart" receipt looks like.
 
-Lightning Fast: Sub-2 second response times.
+Lightning Fast: Sub-5 second response times.
 
 Structured Output: Get back Merchant name, Date, Total, Tax, and Currency.
 
@@ -56,11 +56,11 @@ ReceiptIQ extracts the following fields by default:
 💰 Pricing Tiers
 We offer simple, credit-based pricing for projects of all sizes:
 
-Starter: $10 for 100 scans
+Starter: $10
 
-Growth: $25 for 300 scans
+Growth: $25
 
-Scale: $100 for 1,500 scans
+Scale: $100
 
 🔗 Links
 Website: https://receiptiq.dev
