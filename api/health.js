@@ -128,7 +128,19 @@ export default async function handler(req, res) {
     ...(showDetails && c.error ? { error: c.error } : {}),
   }));
 
-  return res.status(httpStatus).json({
+  const response = {
+    status: overallStatus,
+    total_latency_ms: Date.now() - overallStart,
+  };
+
+  if (showDetails) {
+    response.timestamp = new Date().toISOString();
+    response.version   = "v1";
+    response.model     = process.env.CLAUDE_MODEL || "claude-sonnet-4-20250514";
+    response.checks    = safeChecks;
+  }
+
+  return res.status(httpStatus).json(response);return res.status(httpStatus).json({
     status:           overallStatus,
     total_latency_ms: Date.now() - overallStart,
     timestamp:        new Date().toISOString(),
