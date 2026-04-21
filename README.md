@@ -1,5 +1,5 @@
 ReceiptIQ: Developer-First Receipt OCR API 🧾➡️ {JSON}
-Turn any receipt or invoice into structured JSON in under 2 seconds.
+Turn any receipt or invoice into structured JSON in under 5 seconds.
 
 Built for developers who need high-accuracy OCR without the complexity of training models or managing templates.
 
@@ -19,42 +19,39 @@ Credit-Based Pricing: Pay for what you use with tiers starting at $10.
 
 Privacy First: Images are processed and never used for training third-party models.
 
-🛠 Quick Start (Node.js)
-Integrate ReceiptIQ into your application in minutes:
-const fetch = require('node-fetch');
-const fs = require('fs');
+💻 Quick Start (JavaScript/cURL)
+1. The Endpoint
+POST [https://receiptiq.dev/api/parse](https://receiptiq.dev/api/parse)
+const res = await fetch("https://receiptiq.dev/api/parse", {
+  method: "POST",
+  headers: {
+    "x-api-key": "riq_live_your_key",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ 
+    image: base64Data, 
+    media_type: "image/jpeg" 
+  })
+});
 
-async function parseReceipt() {
-  const image = fs.readFileSync('receipt.jpg', {encoding: 'base64'});
-
-  const response = await fetch('https://api.receiptiq.dev/v1/scan', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer YOUR_API_KEY'
-    },
-    body: JSON.stringify({ image_base64: image })
-  });
-
-  const data = await response.json();
-  console.log(data);
-}
+const { data: receipt } = await res.json();
+console.log(receipt.merchant.name); // "Blue Bottle Coffee"
 
 parseReceipt();
 📊 Standard JSON Output
 ReceiptIQ extracts the following fields by default:
-
-merchant_name (e.g., "Starbucks")
-
-transaction_date (ISO 8601 format)
-
-total_amount (Float)
-
-tax_amount (Float)
-
-currency (e.g., "USD", "EUR")
-
-line_items (Optional/Beta)
+{
+  "success": true,
+  "data": {
+    "merchant": { "name": "...", "address": "...", "phone": "..." },
+    "transaction": { "date": "YYYY-MM-DD", "payment_method": "...", "receipt_number": "..." },
+    "items": [{ "description": "...", "quantity": 1, "unit_price": 4.50, "total": 4.50 }],
+    "totals": { "subtotal": 4.50, "tax": 0.38, "tip": null, "total": 4.88 },
+    "currency": "USD",
+    "category": "restaurant"
+  },
+  "meta": { "processing_time_ms": 1842, "credits_remaining": 499 }
+}
 
 💰 Pricing Tiers
 We offer simple, credit-based pricing for projects of all sizes:
