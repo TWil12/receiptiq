@@ -3,7 +3,7 @@ Turn any receipt or invoice into structured JSON in under 5 seconds.
 
 Built for developers who need high-accuracy OCR without the complexity of training models or managing templates.
 
-Get Your API Key | Live Demo | Support
+Get Your API Key
 
 🚀 The Problem
 Most OCR tools are either too slow, require rigid templates, or return "word soup" that developers then have to parse manually. ReceiptIQ solves this with a single POST request that returns clean, structured data ready for your database.
