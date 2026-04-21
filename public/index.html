@@ -292,8 +292,8 @@
 
 <div class="ticker">
   <span class="ticker-inner">
-    &nbsp;Receipt → JSON &nbsp;·&nbsp; Invoice → JSON &nbsp;·&nbsp; Parse in &lt;5s &nbsp;·&nbsp; 99.2% accuracy &nbsp;·&nbsp; 40+ currencies &nbsp;·&nbsp; No image storage &nbsp;·&nbsp; SSRF protected &nbsp;·&nbsp; Rate limited &nbsp;·&nbsp; REST API &nbsp;·&nbsp; No SDK required &nbsp;·&nbsp;
-    &nbsp;Receipt → JSON &nbsp;·&nbsp; Invoice → JSON &nbsp;·&nbsp; Parse in &lt;5s &nbsp;·&nbsp; 99.2% accuracy &nbsp;·&nbsp; 40+ currencies &nbsp;·&nbsp; No image storage &nbsp;·&nbsp; SSRF protected &nbsp;·&nbsp; Rate limited &nbsp;·&nbsp; REST API &nbsp;·&nbsp; No SDK required &nbsp;·&nbsp;
+    &nbsp;Receipt → JSON &nbsp;·&nbsp; Invoice → JSON &nbsp;·&nbsp; Parse in &lt;5s &nbsp;·&nbsp; highly accuracte &nbsp;·&nbsp; 40+ currencies &nbsp;·&nbsp; No image storage &nbsp;·&nbsp; SSRF protected &nbsp;·&nbsp; Rate limited &nbsp;·&nbsp; REST API &nbsp;·&nbsp; No SDK required &nbsp;·&nbsp;
+    &nbsp;Receipt → JSON &nbsp;·&nbsp; Invoice → JSON &nbsp;·&nbsp; Parse in &lt;5s &nbsp;·&nbsp; highly accuracte &nbsp;·&nbsp; 40+ currencies &nbsp;·&nbsp; No image storage &nbsp;·&nbsp; SSRF protected &nbsp;·&nbsp; Rate limited &nbsp;·&nbsp; REST API &nbsp;·&nbsp; No SDK required &nbsp;·&nbsp;
   </span>
 </div>
 
@@ -343,7 +343,7 @@
 <!-- STATS -->
 <div class="stats-bar">
   <div class="stat"><div class="stat-num">5s</div><div class="stat-label">Avg response</div></div>
-  <div class="stat"><div class="stat-num">99.2%</div><div class="stat-label">Parse accuracy</div></div>
+  <div class="stat"><div class="stat-num">highly accurate</div><div class="stat-label">Parse accuracy</div></div>
   <div class="stat"><div class="stat-num">40+</div><div class="stat-label">Currencies</div></div>
   <div class="stat"><div class="stat-num">$0.02</div><div class="stat-label">Per receipt</div></div>
   <div class="stat"><div class="stat-num">0</div><div class="stat-label">Images stored</div></div>
@@ -374,7 +374,7 @@
       <div class="pricing-feature">Structured JSON output</div>
       <div class="pricing-feature">40+ currencies</div>
       <div class="pricing-feature">Credits never expire</div>
-      <a href="/api/checkout?pack=starter" class="pricing-btn">Buy 500 credits →</a>
+      <button onclick="startCheckout('starter')" class="pricing-btn">Buy 500 credits →</button>
     </div>
     <div class="pricing-card featured">
       <div class="pricing-badge">Best value</div>
@@ -386,7 +386,7 @@
       <div class="pricing-feature">15% cheaper per receipt</div>
       <div class="pricing-feature">Priority processing</div>
       <div class="pricing-feature">Credits never expire</div>
-      <a href="/api/checkout?pack=growth" class="pricing-btn">Buy 1,500 credits →</a>
+      <button onclick="startCheckout('growth')" class="pricing-btn">Buy 1,500 credits →</button>
     </div>
     <div class="pricing-card">
       <div class="pricing-tier">Scale Pack</div>
@@ -397,7 +397,7 @@
       <div class="pricing-feature">30% cheaper per receipt</div>
       <div class="pricing-feature">Priority processing</div>
       <div class="pricing-feature">Credits never expire</div>
-      <a href="/api/checkout?pack=scale" class="pricing-btn">Buy 7,000 credits →</a>
+      <button onclick="startCheckout('scale')" class="pricing-btn">Buy 7,000 credits →</button>
     </div>
   </div>
 </section>
@@ -506,7 +506,7 @@ curl -X POST \
     <a href="#privacy">Privacy</a>
     <a href="mailto:hello@receiptiq.dev">Contact</a>
   </div>
-  <div class="footer-copy">© 2025 ReceiptIQ · No images stored </div>
+  <div class="footer-copy">© 2026 ReceiptIQ · No images stored </div>
 </footer>
 
 <script>
@@ -599,6 +599,24 @@ curl -X POST \
       btn.disabled = false;
       btn.textContent = '⚡ Parse Receipt';
       showStatus('error', 'Request failed. Check your connection and try again.');
+    });
+  }
+ function startCheckout(pack) {
+    fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pack: pack })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Could not start checkout. Please try again.');
+      }
+    })
+    .catch(function() {
+      alert('Network error. Please try again.');
     });
   }
 </script>
