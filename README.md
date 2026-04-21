@@ -67,12 +67,3 @@ Scale: $100 for 1,500 scans
 
 🔗 Links
 Website: https://receiptiq.dev
-
-Documentation: receiptiq.dev/docs
-
-To finalize this, I just need to know:
-Exact JSON Fields: Does your API extract Line Items (individual items on the receipt), or just the Total/Merchant/Date?
-
-Base44/Vibe-Coding: Since you’ve mentioned using "vibe-coding" and Base44 for other projects, did you use them for ReceiptIQ? If so, we should add a "Built With" section—this is a huge trend on GitHub right now and attracts fellow indie developers.
-
-License: Would you like to use the MIT License? It’s the most standard for open-source GitHub repos.
