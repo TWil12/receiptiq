@@ -1,7 +1,8 @@
 // ReceiptIQ — /api/checkout.js
 // Creates a Stripe Checkout session for a one-time credit pack purchase.
 //
-// Usage: GET /api/checkout?pack=starter | growth | scale
+// Usage: POST /api/checkout
+// Body:  { "pack": "starter" | "growth" | "scale" }
 //
 // Stripe Products to create (Dashboard → Product Catalog → Add Product):
 //   All three must be ONE-TIME payments, not subscriptions.
@@ -53,7 +54,7 @@ const pack = req.body?.pack || "starter";
       allow_promotion_codes: true,
     });
 
-    return res.redirect({ url: session.url });
+    return res.status(200).json({ url: session.url });
 
   } catch (err) {
     console.error("[receiptiq] Checkout error:", err);
