@@ -140,12 +140,5 @@ export default async function handler(req, res) {
     response.checks    = safeChecks;
   }
 
-  return res.status(httpStatus).json(response);return res.status(httpStatus).json({
-    status:           overallStatus,
-    total_latency_ms: Date.now() - overallStart,
-    timestamp:        new Date().toISOString(),
-    version:          "v1",
-    model:            process.env.CLAUDE_MODEL || "claude-sonnet-4-20250514",
-    checks:           safeChecks,
-  });
+  return res.status(httpStatus).json(response);
 }
