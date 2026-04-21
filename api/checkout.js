@@ -32,7 +32,10 @@ const PRICE_IDS = {
 };
 
 export default async function handler(req, res) {
-  const pack = (req.method === "GET" ? req.query.pack : req.body?.pack) || "starter";
+  if (req.method !== "POST") {
+  return res.status(405).json({ error: "Method not allowed." });
+}
+const pack = req.body?.pack || "starter";
 
   if (!PRICE_IDS[pack]) {
     return res.status(400).json({
