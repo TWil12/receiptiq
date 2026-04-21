@@ -51,11 +51,9 @@ const pack = req.body?.pack || "starter";
       success_url:          `${process.env.APP_URL}/welcome.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:           `${process.env.APP_URL}/#pricing`,
       allow_promotion_codes: true,
-      // Pre-fill email if returning customer comes from their dashboard
-      ...(req.query.email ? { customer_email: req.query.email } : {}),
     });
 
-    return res.redirect(303, session.url);
+    return res.redirect({ url: session.url });
 
   } catch (err) {
     console.error("[receiptiq] Checkout error:", err);
