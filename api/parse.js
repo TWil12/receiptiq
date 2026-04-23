@@ -118,7 +118,15 @@ async function logUsage(keyId, success, errorType = null, durationMs = null) {
   } catch { console.error("[receiptiq] Failed to write usage log"); }
 }
 
-function validateUrl(raw) { /* logic unchanged */ return null; }
+function validateUrl(raw) {
+  if (!raw.startsWith("https://")) return "URL must use https://";
+  let u;
+  try { u = new URL(raw); } catch { return "Invalid URL format"; }
+  for (const p of BLOCKED_HOST_PATTERNS) {
+    if (p.test(u.hostname)) return "URL resolves to a private address";
+  }
+  return null;
+}
 function validateMediaType(mt) { return ALLOWED_MEDIA_TYPES.has(mt) ? null : `Unsupported type.`; }
 
 async function callClaude(imageContent) {
@@ -133,7 +141,18 @@ async function callClaude(imageContent) {
           role: "user",
           content: [
             imageContent,
-            { type: "text", text: `Parse this receipt or invoice into structured JSON...` }, // Kept brief for snippet
+            { type: "text", text: `Parse this receipt or invoice into structured JSON. Return ONLY valid JSON — no markdown, no explanation, no preamble.
+
+{
+  "merchant":    { "name": string, "address": string|null, "phone": string|null, "website": string|null },
+  "transaction": { "date": "YYYY-MM-DD"|null, "time": "HH:MM"|null, "receipt_number": string|null, "payment_method": string|null },
+  "items":       [ { "description": string, "quantity": number, "unit_price": number, "total": number } ],
+  "totals":      { "subtotal": number|null, "tax": number|null, "tip": number|null, "discount": number|null, "total": number },
+  "currency":    string,
+  "category":    "restaurant"|"grocery"|"retail"|"travel"|"medical"|"utilities"|"other"
+}
+
+Use null for missing/unclear fields. All monetary values must be numbers, not strings.` }
           ],
         }],
       },
@@ -217,7 +236,7 @@ export default async function handler(req, res) {
   try {
     raw = await callClaude(imageContent);
   } catch (err) {
-    if (keyRecord.tier === 'pro') {
+    if (keyRecord.tier !== 'trial' && keyRecord.tier !== 'rapidapi') {
       await supabase(`/api_keys?id=eq.${keyRecord.id}`, { method: "PATCH", body: JSON.stringify({ credits: creditsAfter + 1 }) }).catch(() => {});
     }
     return res.status(502).json({ error: "AI service error. Try again." });
@@ -231,7 +250,13 @@ export default async function handler(req, res) {
   } catch {
     return res.status(422).json({ error: "Could not extract data from this image." });
   }
+// Before the final return
+const duration = Date.now() - start;
+if (keyRecord.tier !== 'trial' && keyRecord.tier !== 'rapidapi') {
+  await logUsage(keyRecord.id, true, null, duration);
+}
 
+return res.status(200).json({ ... });
   return res.status(200).json({
     success: true,
     data: parsed,
