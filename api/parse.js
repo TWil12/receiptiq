@@ -255,8 +255,6 @@ const duration = Date.now() - start;
 if (keyRecord.tier !== 'trial' && keyRecord.tier !== 'rapidapi') {
   await logUsage(keyRecord.id, true, null, duration);
 }
-
-return res.status(200).json({ ... });
   return res.status(200).json({
     success: true,
     data: parsed,
